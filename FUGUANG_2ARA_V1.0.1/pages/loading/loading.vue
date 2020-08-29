@@ -33,12 +33,12 @@
 <style>
 	 #loading3 {
 	     position: relative;
-	     width: 116.65px;
-	     height: 116.65px;
+	     width: 60.76rpx;
+	     height: 60.76rpx;
 	 }
 	 .demo3 {
-	    width: 10px;
-	     height: 10px;
+	    width: 5.2rpx;
+	     height:5.2rpx;
 	     border-radius: 50%;
 	     background: #D0D0D0;
 	     position: absolute;
@@ -46,63 +46,63 @@
 	     -webkit-animation: demo3 linear 1.2s infinite;
 	 }
 	 .demo3:nth-child(1){
-	     left: 108px;
-	     top: 87px;
+	     left: 56.69rpx;
+	     top: 45.57rpx;
 	     animation-delay:0s;
 	 }
 	 .demo3:nth-child(2){
-	     left: 87px;
-	     top: 108.2px;
+	     left: 45.57rpx;
+	     top: 56.69rpx;
 	     animation-delay:0.1s;
 	 }
 	 .demo3:nth-child(3){
-	     left: 58px;
-	     top: 116px;
+	     left: 30.38rpx;
+	     top: 60.76rpx;
 	     animation-delay:0.1s;
 	 }
 	 .demo3:nth-child(4){
-	     left: 29px;
-	     top: 108px;
+	     left: 15.19rpx;
+	     top: 56.69rpx;
 	     animation-delay:0.2s;
 	 }
 	 .demo3:nth-child(5){
-	     left: 7.77px;
-	     top: 87px;
+	     left: 4.07rpx;
+	     top: 45.57rpx;
 	     animation-delay:0.4s;
 	 }
 	 .demo3:nth-child(6){
-	     left: 1.56px;
-	     top: 58px;
+	     left: 0rpx;
+	     top: 30.38rpx;
 	     animation-delay:0.5s;
 	 }
 	 .demo3:nth-child(7){
-	     left: 7.77px;
-	     top: 29px;
+	     left: 4.07rpx;
+	     top: 15.19rpx;
 	     animation-delay:0.6s;
 	 }
 	 .demo3:nth-child(8){
-	     left: 29px;
-	     top: 7.8px;
+	     left: 15.19rpx;
+	     top: 4.07rpx;
 	     animation-delay:0.7s;
 	 }
 	 .demo3:nth-child(9){
-	     left: 58px;
-	     top: 0px;
+	     left: 30.38rpx;
+	     top: 0rpx;
 	     animation-delay:0.8s;
 	 }
 	 .demo3:nth-child(10){
-	     left: 87px;
-	     top: 7.77px;
+	     left: 45.57rpx;
+	     top: 4.07rpx;
 	     animation-delay:0.9s;
 	 }
 	 .demo3:nth-child(11){
-	     left: 108.23px;
-	     top: 29px;
+	     left: 56.7rpx;
+	     top: 15.2rpx;
 	     animation-delay:1.0s;
 	 }
 	 .demo3:nth-child(12){
-	     left: 116px;
-	     top: 58px;
+	     left: 60.76rpx;
+	     top: 30.38rpx;
 	     animation-delay:1.1s;
 	 }
 	

@@ -5,7 +5,7 @@
 			<view class="dialog-connect-fail"  >
 				<view class="d-title">连接失败</view>
 				<view class="d-content">
-					请尝试一下操作：<br/>
+					请尝试以下操作：<br/>
 					1.请确认设备电量充足，并处开启状态<br/>
 					2.将设备靠近要连接的手机(10米以内)
 				</view>
