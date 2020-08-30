@@ -22,6 +22,7 @@
 		name: "loading",	
 		data() {
 			return {
+				dark:0
 			}
 		},
 		methods: {
@@ -38,12 +39,12 @@
 	 }
 	 .demo3 {
 	    width: 5.2rpx;
-	     height:5.2rpx;
-	     border-radius: 50%;
-	     background: #D0D0D0;
-	     position: absolute;
-	    animation: demo3 linear 1.2s infinite;
-	     -webkit-animation: demo3 linear 1.2s infinite;
+	    height:5.2rpx;
+	    border-radius: 50%;
+	    background: #D0D0D0;
+	    position: absolute;
+		animation: demo3 linear 1.2s infinite;
+	    -webkit-animation: demo3 linear 1.2s infinite;
 	 }
 	 .demo3:nth-child(1){
 	     left: 56.69rpx;

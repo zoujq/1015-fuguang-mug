@@ -7,13 +7,14 @@
 			}
 		}	   
         ,{
-            "path" : "pages/regist/regist",
-            "style" : {}
+            "path" : "pages/connect/connect",
+            "style" : {"navigationStyle":"custom"}
         }
         ,{
             "path" : "pages/loading/loading",
-            "style" : {}
+            "style" : {"navigationStyle":"custom"}
         }
+	
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
