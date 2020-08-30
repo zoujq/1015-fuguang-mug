@@ -124,7 +124,7 @@
 				pop_show: '',
 				// lan:navigator.language=='zh-CN' ? lan_data.cn : lan_data.en
 				lan:lan_data.cn,
-				dark:1
+				dark:0
 				
 			}
 		},
@@ -136,6 +136,12 @@
 		},
 		onShow(){
 			init_index();
+			if( window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ) {
+				// dark mode do something
+				dark=1;
+			}else{
+				dark=0;
+			}
 		},
 		methods: {
 			click_s(e){
@@ -154,7 +160,7 @@
 				uni.redirectTo({
 				    url: "../connect/connect"
 				});
-	
+			
 			}
 			
 			
