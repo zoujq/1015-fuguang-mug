@@ -1,5 +1,5 @@
 <script>
-	import ble from './ble/ble.js';  
+	import ble from "./ble/ble.js";  
 	
 	export default {
 		onLaunch: function() {
@@ -12,6 +12,9 @@
 		onHide: function() {
 			ble.de_init_ble();
 			console.log('App Hide')
+		},
+		globalData: {
+			index_loop_id:-1
 		}
 	}
 </script>

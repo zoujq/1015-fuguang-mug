@@ -39,10 +39,10 @@ var en={
 	"Lan01":"Connection failed",
 	"Lan02":"Please try the following:",
 	"Lan03":"1.Device charged and turned on",
-	"Lan04":"2. The device(within 10 meters)",
+	"Lan04":"2.The device(within 10 meters)",
 	"Lan05":"Try again later",
 	"Lan06":"Reconnect now",
-	"Lan07":"Poor contact!",
+	"Lan07":"Loose contact!",
 	"Lan08":"Cooling",
 	"Lan09":"temperature",
 	"Lan10":"Temperature setting",
@@ -58,17 +58,17 @@ var en={
 	"Lan20":"2. The distance is less than 5 meters",
 	"Lan21":"3. Unblocked mobile network",
 	"Lan22":"4. The current device is not registered by another account",
-	"Lan23":"register again",
+	"Lan23":"Register again",
 	"Lan24":"2ARA Fuguang Mug",
-	"Lan25":"connecting...",
+	"Lan25":"Connecting...",
 	"Lan26":"Standby",
-	"Lan27":"Temperature",
+	"Lan27":"Maintaining",
 	"Lan28":"Heating",
 	"Lan29":"Cooling",
-	"Lan30":"not connected",
+	"Lan30":"Not connected",
 	"Lan31":"reconnect",
-	"Lan32":"The battery low, heating is prohibited!",
-	"Lan33":"Please add water or straighten the cup"
+	"Lan32":"Low battery. Can not keep heating!",
+	"Lan33":"The mug is burning dry!"
 }
 
 
