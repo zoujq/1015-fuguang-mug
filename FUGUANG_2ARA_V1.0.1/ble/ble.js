@@ -1,25 +1,6 @@
 var ble_state=0;//0-未连接  1-连接中  2-已连接
-var intervalID=0;
-var init_ed=0;
-var count=0;
 var bang_ding_state=0;
-function init_ble()
-{
-	if(init_ed==0)
-	{
-		init_ed=1;
-		intervalID= setInterval(ble_loop, 10000, '');
-	}	
-}
-function de_init_ble()
-{
-	clearInterval(intervalID);
-	init_ed=0;
-}
-function ble_loop()
-{
-	console.log(count++);
-}
+
 /*********************************regist***********************************/                                     
 function start_regist()
 {	
@@ -33,7 +14,7 @@ window.get_adapter_cb = (res)=>{
 	if(JSON.parse(res).available==true)
 	{
 		console.log('adapter is ture');
-		 window.hilink.getCurrentUnregisteredDevice('window.get_dev_cb');
+		window.hilink.getCurrentUnregisteredDevice('window.get_dev_cb');
 	}
 	else{
 		bang_ding_state=-1;
@@ -87,14 +68,19 @@ var IOS_WRITE_CHARA_UUID ='00010203-0405-0607-0809-0A0B0C0DFFE2';
 function start_ble()
 {
 	ble_state=1;
-	window.hilink.getCurrentRegisteredDevice('window.get_cdev_cb');
-	window.hilink.startBluetoothDevicesDiscovery(['0000'],false,0);
-	window.hilink.onBluetoothDeviceFound('window.dev_find_cp');
+	window.hilink.getCurrentRegisteredDevice('window.get_registed_dev_cb');
 	window.hilink.onBLEConnectionStateChange('window.ble_sta_change_cb');
-	
+	window.hilink.onBluetoothDeviceFound('window.dev_find_cp');		
+	window.hilink.startBluetoothDevicesDiscovery(['0000'],false,0);	
+	window.hilink.onBluetoothAdapterStateChange('window.adapter_change_cp_2')
 }
-window.get_cdev_cb = (res)=>{
-	
+window.adapter_change_cp_2 = (res)=>{
+	console.log('adapter_change_cp_2:'+res);
+	if(JSON.parse(res).available==false){
+		ble_state=0;
+	}
+}
+window.get_registed_dev_cb = (res)=>{	
 	hilink_sys_devId=JSON.parse(res).deviceId;
 	console.log('hilink_sys_devId:'+hilink_sys_devId);
 }
@@ -107,20 +93,37 @@ window.dev_find_cp = (res)=>{
 		ble_deviceId=js_obj.deviceId;
 		window.hilink.createBLEConnection(ble_deviceId);
 		window.hilink.onBLEServicesDiscovered('window.service_find_cb');
-		//window.hilink.stopBluetoothDevicesDiscovery('window.stop_find_cb');
 	}
 	
 }
 window.ble_sta_change_cb  = (res)=>{
-	console.log(res)
+	console.log('ble_sta_change_cb'+res)
 	if(JSON.parse(res).connected==true)
 	{
 		console.log('connected success' );
 		window.hilink.onBLECharacteristicValueChange('window.char_change_cb');		
 	}
+	else{
+		ble_state=0;
+		stop_ble();
+	}
 }
+window.service_find_cb = (res)=>{
+	console.log('service_find_cb:'+ res)
+	if(window.hilink.notifyBLECharacteristicValueChange(ble_deviceId, IOS_SERVICE_UUID, IOS_NOTIFY_CHARA_UUID, true)==0)
+	{
+		console.log('notity:ok') ;
+		window.hilink.stopBluetoothDevicesDiscovery();
+		ble_state=2;
+	}else{
+		ble_state=0;
+		stop_ble();
+	}
+	
+}
+
 window.char_change_cb = (res)=>{
-	console.log('char_change_cb:'+res)
+	console.log('char_change_cb:'+res);
 	var rec=str16_to_byteArr(JSON.parse(res).data)
 	if(rec[0]==1 && rec[1]==0x55 && rec.length==19)
 	{
@@ -133,18 +136,7 @@ window.char_change_cb = (res)=>{
 		console.log('received data ok');
 	}
 }
-window.service_find_cb = (res)=>{
-	console.log('service_find_cb:'+ res)
-	if(window.hilink.notifyBLECharacteristicValueChange(ble_deviceId, IOS_SERVICE_UUID, IOS_NOTIFY_CHARA_UUID, true)==0)
-	{
-		console.log('notity:ok') ;
-		ble_state=2;
-	}
-	
-}
-window.stop_find_cb = (res)=>{
-	console.log(res)
-}
+
 function get_ble_state()//0-未连接  1-连接中  2-已连接
 {
 	return ble_state;
@@ -152,6 +144,9 @@ function get_ble_state()//0-未连接  1-连接中  2-已连接
 function stop_ble()
 {
 	ble_state=0;
+	window.hilink.stopBluetoothDevicesDiscovery();
+	window.hilink.closeBLEConnection(ble_deviceId);
+	
 }
 function send_data_to_mcu(arr)
 {	
@@ -224,9 +219,6 @@ function change_nav_title()
 	
 /****************************************port**********************************/
 export default {  
-    init_ble,  
-    de_init_ble,
-	count,
 	start_regist,
 	get_bangding_state,
 	start_ble,

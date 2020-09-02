@@ -20,8 +20,8 @@
 			<view class="notic-text">
 			{{(errcode & 0x01) ? lan['Lan07'] : (errcode & 0x02) ? lan['Lan33'] :  (errcode & 0x04) ? lan['Lan32'] : ''}}</view>
 		</view>
-		<image @click="click_s" class="idimg" ></image>
-		<image class="logo"  @click="testx"></image>
+		<image class="idimg" ></image>
+		<image class="logo" ></image>
 		
 		<view class="cup-state" >
 			<view class="connect-state" >
@@ -40,7 +40,7 @@
 				<view class="loading-state" :class="[ble_state == 1 ? 'loading-state-show' : '']" ><loading></loading></view>
 				<view class="battery-state" :class="[ble_state == 2 ? 'battery-state-show' : '']">
 					<view class="battery-container">
-						<view class="battery-show"></view>
+						<view class="battery-show" v-bind:style="{width:(battery*31.25/100) + 'rpx'}"></view>
 					</view>
 					
 					<image class="charging" :class="[charging ? 'charging-show':'']"></image>
@@ -50,7 +50,7 @@
 			</view>
 			
 		</view>
-		<view class="cup-set"  >
+		<view class="cup-set" :class="[ble_state != 2 ? 'cup-set-disabled':'']" >
 			<view class="cup-set-title" >{{lan['Lan10']}}</view>
 			<view class="cup-set-container">
 				<view class="cup-set-item"  @click="cup_set(45)">
@@ -120,19 +120,20 @@
 		},
 		onLoad() {
 			new VConsole();
-			//ble.change_nav_title();
+			this.ble_state=1;
+			ble.change_nav_title();
 			
 		},
 		onHide(){
 			this.de_init_index();
+			console.log('index onHide');
 		},
 		onShow(){
-			this.init_index();			
+			this.init_index();	
+			this.ble_state=1;
+			console.log('index onShow');
 		},
 		methods: {
-			click_s(e){
-			
-			},
 			shao_hou_retry(e){
 				this.pop_show='';
 			},
@@ -140,16 +141,6 @@
 				this.pop_show='';
 				this.re_connect();
 
-			},
-			testx(e){
-				console.log('123')
-			},
-			t1(){
-				uni.redirectTo({
-				    url: "../connect/connect"
-				});
-				console.log(this.ble_state)
-				
 			},
 			cup_set(i){
 				this.temp_set=i;				
@@ -159,25 +150,47 @@
 			re_connect(){
 				this.ble_state=1;
 				re_connect_counter=0;
+				ble.stop_ble();
 				ble.start_ble()
 			},
 			index_loop(){
 				console.log('index'+main_count++);
 				
-				if(this.ble_state==1 && re_connect_counter<15)
+				if(this.ble_state==1 && re_connect_counter<30)
 				{
 					re_connect_counter++;	
-					if(re_connect_counter==15)
+					if(re_connect_counter%8==0){
+						ble.stop_ble();
+						ble.start_ble();
+					}
+					if(re_connect_counter==30)
 					{
 						this.ble_state=0;
 						this.pop_show='popup-lalay-show';
 					}
 				}
-				if(ble.get_ble_state()==2)
+				if(ble.get_ble_state()==0 && this.ble_state==1)
 				{
-					this.ble_state=2
+					ble.stop_ble();
+					ble.start_ble();
 				}
-				this.check_cup_state();
+				if(ble.get_ble_state()==0 && this.ble_state==2)
+				{
+					this.ble_state=1;
+					this.temp_set=0;
+					ble.stop_ble();
+					ble.start_ble();
+				}
+				if(this.ble_state!=2 && ble.get_ble_state()==2)
+				{
+					this.ble_state=2;
+					re_connect_counter=0;
+				}
+				if(this.ble_state==2)
+				{
+					this.check_cup_state();
+				}
+				
 				
 			},
 			de_init_index()	{
@@ -479,7 +492,7 @@
 			background: #262626;
 		}
 	}
-	.disabled{
+	.cup-set-disabled{
 		 pointer-events: none;
 		 opacity: 0.6;
 	}
@@ -533,7 +546,7 @@
 	}
 	.battery-show{
 		height: 16rpx;
-		width: 20rpx;
+		width: 0rpx;
 		background-color: #1A1A1A;
 		border-radius: 2rpx;
 		margin-left: 4rpx;

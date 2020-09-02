@@ -1,16 +1,12 @@
-<script>
-	import ble from "./ble/ble.js";  
-	
+<script>	
 	export default {
 		onLaunch: function() {
 			console.log('App Launch')
 		},
 		onShow: function() {
-			ble.init_ble();
 			console.log('App Show')
 		},
 		onHide: function() {
-			ble.de_init_ble();
 			console.log('App Hide')
 		},
 		globalData: {
