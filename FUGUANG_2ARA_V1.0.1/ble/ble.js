@@ -1,14 +1,26 @@
 var ble_state=0;//0-未连接  1-连接中  2-已连接
 var bang_ding_state=0;
-
+var os='';
+/*********************************get os***********************************/  
+function get_os()
+{
+	var os = navigator.userAgent;
+	if(os.indexOf('Android') > -1 || os.indexOf('Adr') > -1)
+	{
+		os='android';
+	}
+	else{
+		os='ios';
+	}
+	return os;
+}
 /*********************************regist***********************************/                                     
 function start_regist()
 {	
 	bang_ding_state=0;
 	console.log('get_adapter');
-	window.hilink.getBluetoothAdapterState('window.get_adapter_cb');
-	// window.hilink.getCurrentUnregisteredDevice('window.adapter_cb');
-
+	// window.hilink.getBluetoothAdapterState('window.get_adapter_cb');
+	window.hilink.getCurrentUnregisteredDevice('window.get_dev_cb');
 }
 window.get_adapter_cb = (res)=>{
 	if(JSON.parse(res).available==true)
@@ -31,14 +43,23 @@ window.window.adapter_change_cb = (res)=>{
 }
 window.get_dev_cb = (res)=>{
 	console.log(res);
-	
 	let json_obj=JSON.parse(res)
+	
 	if(json_obj.errCode==0)
-	{
-		window.hilink.registerBleDevice(json_obj.advertisData.replace(/ /,'').replace(/</,'').replace(/>/,''), 
-		'V1.0.1', 'V1.0.1', 'window.regist_cb');
-		console.log('registerBleDevice')
-	}
+	{		
+		if(get_os()=='android')
+		{
+			window.hilink.registerBleDevice(json_obj.advertisData.substring(18,30),
+			'V1.0.1', 'V1.0.1', 'window.regist_cb');
+			console.log('android registerBleDevice');
+		}
+		else
+		{
+			window.hilink.registerBleDevice(json_obj.advertisData.replace(/ /,'').replace(/</,'').replace(/>/,''),
+			'V1.0.1', 'V1.0.1', 'window.regist_cb');
+			console.log('ios registerBleDevice');
+		}
+	}	
 	else
 	{
 		bang_ding_state=-1;
@@ -62,16 +83,28 @@ function get_bangding_state(){
 /****************************************ble connect **********************************/
 var hilink_sys_devId="";
 var ble_deviceId='';
-var IOS_SERVICE_UUID ='00010203-0405-0607-0809-0A0B0C0DFFE0';
-var IOS_NOTIFY_CHARA_UUID ='00010203-0405-0607-0809-0A0B0C0DFFE1';
-var IOS_WRITE_CHARA_UUID ='00010203-0405-0607-0809-0A0B0C0DFFE2';
+// var IOS_SERVICE_UUID ='00010203-0405-0607-0809-0A0B0C0DFFE0';
+// var IOS_NOTIFY_CHARA_UUID ='00010203-0405-0607-0809-0A0B0C0DFFE1';
+// var IOS_WRITE_CHARA_UUID ='00010203-0405-0607-0809-0A0B0C0DFFE2';
+
+var IOS_SERVICE_UUID = '0000FFB0-0000-1000-8000-00805F9B34FB';
+var IOS_NOTIFY_CHARA_UUID ='0000FFB2-0000-1000-8000-00805F9B34FB';
+var IOS_WRITE_CHARA_UUID ='0000FFB1-0000-1000-8000-00805F9B34FB';
+
 function start_ble()
 {
 	ble_state=1;
 	window.hilink.getCurrentRegisteredDevice('window.get_registed_dev_cb');
 	window.hilink.onBLEConnectionStateChange('window.ble_sta_change_cb');
-	window.hilink.onBluetoothDeviceFound('window.dev_find_cp');		
-	window.hilink.startBluetoothDevicesDiscovery(['0000'],false,0);	
+	window.hilink.onBluetoothDeviceFound('window.dev_find_cp');	
+	// andriod err
+	if(get_os()=='android')
+	{
+		window.hilink.startBluetoothDevicesDiscovery([],true,0);
+	}
+	else{
+		 window.hilink.startBluetoothDevicesDiscovery([],false,0);	
+	}			
 	window.hilink.onBluetoothAdapterStateChange('window.adapter_change_cp_2')
 }
 window.adapter_change_cp_2 = (res)=>{
@@ -87,14 +120,28 @@ window.get_registed_dev_cb = (res)=>{
 window.dev_find_cp = (res)=>{
 	console.log(res);
 	var js_obj=JSON.parse(res);
-	if(js_obj.advertisData.replace(/ /,'').replace(/</,'').replace(/>/,'')==hilink_sys_devId)
+	if(get_os()=='android')
 	{
-		console.log('dev is ok');
-		ble_deviceId=js_obj.deviceId;
-		window.hilink.createBLEConnection(ble_deviceId);
-		window.hilink.onBLEServicesDiscovered('window.service_find_cb');
+		console.log(js_obj[0].advertisData.substring(18,30));
+		if(js_obj[0].advertisData.substring(18,30)==hilink_sys_devId)
+		{
+			console.log('android dev is ok');
+			ble_deviceId=js_obj[0].deviceId;
+			window.hilink.createBLEConnection(ble_deviceId);
+			window.hilink.onBLEServicesDiscovered('window.service_find_cb');
+			
+		}
+		
 	}
-	
+	else{		
+		if(js_obj.advertisData.replace(/ /,'').replace(/</,'').replace(/>/,'')==hilink_sys_devId)
+		{
+			console.log('ios dev is ok');
+			ble_deviceId=js_obj.deviceId;
+			window.hilink.createBLEConnection(ble_deviceId);
+			window.hilink.onBLEServicesDiscovered('window.service_find_cb');
+		}
+	}	
 }
 window.ble_sta_change_cb  = (res)=>{
 	console.log('ble_sta_change_cb'+res)
@@ -125,14 +172,14 @@ window.service_find_cb = (res)=>{
 window.char_change_cb = (res)=>{
 	console.log('char_change_cb:'+res);
 	var rec=str16_to_byteArr(JSON.parse(res).data)
-	if(rec[0]==1 && rec[1]==0x55 && rec.length==19)
+	if(rec[0]==1 && rec.length==19)
 	{
 		cup_state.temp=rec[5];
 		cup_state.temp_set=rec[6];
 		cup_state.work_mode=rec[7];
 		cup_state.battery=rec[8];
 		cup_state.errcode=rec[10];
-		data_send(0x5A);
+		//data_send(0x5A);
 		console.log('received data ok');
 	}
 }
@@ -150,7 +197,18 @@ function stop_ble()
 }
 function send_data_to_mcu(arr)
 {	
-	window.hilink.writeBLECharacteristicValue (ble_deviceId,IOS_SERVICE_UUID,IOS_WRITE_CHARA_UUID,byteArr_to_str16(arr));
+	if(get_os()=='android')
+	{
+		window.hilink.writeBLECharacteristicValue(ble_deviceId,IOS_SERVICE_UUID,IOS_WRITE_CHARA_UUID,byteArr_to_str16(arr),
+			'window.write_cb');
+	}
+	else{
+		window.hilink.writeBLECharacteristicValue(ble_deviceId,IOS_SERVICE_UUID,IOS_WRITE_CHARA_UUID,byteArr_to_str16(arr));
+	}
+	
+}
+window.write_cb = (res)=>{
+	
 }
 function str16_to_byteArr(str) 
 { 
@@ -208,6 +266,7 @@ function cup_set_temp(temp)
 }
 function get_cup_state()
 {
+	data_send(0xaa);
 	return cup_state;
 }
 

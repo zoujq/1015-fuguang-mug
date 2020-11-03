@@ -4,12 +4,15 @@
 			<view class="dialog-connect-fail"  >
 				<view class="d-title">{{lan['Lan01']}}</view>
 				<view class="d-content">
-					{{lan['Lan02']}}<br/>
-					{{lan['Lan03']}}<br/>
-					{{lan['Lan04']}}
+					<view class="please">{{lan['Lan02']}}</view>
+					<view>
+						{{lan['Lan03']}}<br/>
+						{{lan['Lan04']}}
+					</view>					
 				</view>
 				<view class="d-footer-container">
 					<view class="chongshi" @click="shao_hou_retry">{{lan['Lan05']}}</view>
+					<view class="line"></view>
 					<view class="like" @click="like_chong_lian">{{lan['Lan06']}}</view>
 				</view>
 			</view>
@@ -39,14 +42,14 @@
 			<view class="state-con">
 				<view class="loading-state" :class="[ble_state == 1 ? 'loading-state-show' : '']" ><loading></loading></view>
 				<view class="battery-state" :class="[ble_state == 2 ? 'battery-state-show' : '']">
-					<view class="battery-container">
-						<view class="battery-show" v-bind:style="{width:(battery*31.25/100) + 'rpx'}"></view>
+					<view class="battery-container" :class="[battery <= 15 ? 'battery-low' : '']">
+						<view class="battery-show" :class="[battery <= 15 ? 'battery-show-low':'']" v-bind:style="{width:(battery*31.25/100) + 'rpx'}"></view>
 					</view>
 					
 					<image class="charging" :class="[charging ? 'charging-show':'']"></image>
-					<view class="battrey_v">{{battery}}%</view>
+					<view class="battrey_v" :class="[ battery <= 15 ? 'battrey_v-low':'']">{{battery}}%</view>
 				</view>
-				<view class="re-connect" :class="[ble_state == 0 ? 're-connect-show' : '']"  @click='re_connect'>重新连接</view>
+				<view class="re-connect" :class="[ble_state == 0 ? 're-connect-show' : '']"  @click='re_connect'>{{lan['Lan31']}}</view>
 			</view>
 			
 		</view>
@@ -85,7 +88,6 @@
 				</view>
 			</view>
 		</view>
-		<!-- <view @click="t1">绑定设备</view> -->
 	</view>
 </template>
 
@@ -106,10 +108,8 @@
 		data() {
 			return {
 				pop_show: '',
-				// lan:navigator.language=='zh-CN' ? lan_data.cn : lan_data.en
-				lan:lan_data.cn,
+				lan:navigator.language=='zh-cn' ? lan_data.cn : navigator.language=='zh-CN'? lan_data.cn : lan_data.en,
 				ble_state:0,
-				cup_work_state:0,
 				temp:0,
 				temp_set:0,
 				work_mode:0,
@@ -119,9 +119,10 @@
 			}
 		},
 		onLoad() {
-			new VConsole();
+			// new VConsole();
 			this.ble_state=1;
 			ble.change_nav_title();
+			console.log(navigator.language)
 			
 		},
 		onHide(){
@@ -228,8 +229,16 @@
 					{
 						this.charging=1;
 					}
+					else{
+						this.charging=0;
+					}
 					
 				}
+			},
+			t1(){
+				uni.redirectTo({
+				    url: '../connect/connect'
+				});
 			}
 			
 			
@@ -241,9 +250,7 @@
 	.content {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		height: 100vh;
-		background-color: #F7F7F7;		
+		align-items: center;		
 	}
 	@media (prefers-color-scheme: dark) {
 		.content{
@@ -288,6 +295,9 @@
 		font-size: 41.67rpx;
 		line-height: 116.67rpx;
 	}
+	.please{
+		margin-bottom: 1.5rpx;
+	}
 	.d-content{
 		height: 142.71rpx;
 		width: 583.33rpx;
@@ -297,7 +307,7 @@
 		height: 50rpx;
 		width: 583.33rpx;
 		display: flex;
-		justify-content: center;
+		justify-content: space-between;
 		flex-direction: row;
 		font-size: 33.33rpx;
 		color: #007DFF;
@@ -305,14 +315,17 @@
 	}
 	.chongshi{
 		height: 50rpx;
-		width: 291.14rpx;
-		border-right: 0.52rpx solid rgba(0,0,0,0.20);
+		width: 266.67rpx;
 		text-align: center;
+	}
+	.line{
+		border-right: 1.04rpx solid rgba(0,0,0,0.20);
+		height: 50rpx;
+		width: 0.01rpx;
 	}
 	.like{
 		height: 50rpx;
-		width: 291.14rpx;
-		border-left: 0.52rpx solid rgba(0,0,0,0.20);
+		width: 266.67rpx;
 		text-align: center;
 		/* background-color: #007AFF; */
 	}
@@ -376,7 +389,7 @@
 		background-size:cover;
 	}
 	.cup-state{
-		width: 683.33rpx;
+		width: 583.33rpx;
 		height: 183.33rpx;
 		background-color: #FFFFFF;
 		margin-top:20.83rpx ;
@@ -386,6 +399,8 @@
 		flex-direction: row;
 		justify-content:space-between;
 		align-items: center;
+		padding-left: 50rpx;
+		padding-right: 50rpx;
 	}
 	@media (prefers-color-scheme: dark) {
 		.cup-state{
@@ -395,13 +410,12 @@
 	
 	.connect-state{
 		height: 50rpx;
-		width: 150rpx;
+		width: 182rpx;
 		/* background-color: #999999; */
 		opacity: 0.9;
 		font-size: 37.5rpx;
 		color: #0000000;
-		line-height: 50rpx;
-		margin-left: 50rpx;
+		line-height: 52rpx;
 	}
 	
 	@media (prefers-color-scheme: dark) {
@@ -411,7 +425,7 @@
 		}
 	}
 	.temp-state{
-		height: 102rpx;
+		height: 104.69rpx;
 		width: 163.54rpx;
 		/* background-color: #999999; */
 	/* 	margin-left: 97.4rpx;
@@ -431,13 +445,15 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
+		text-align: right;
 	}
 	.temp-num-v{
 		font-size:50rpx ;
+		font-weight: bold;
 		width: 56.25rpx;
 		height:66.66rpx;
 		color: #000;
-		margin-right:1.05rpx ;
+		margin-right:5rpx ;
 	}
 	
 	@media (prefers-color-scheme: dark) {
@@ -451,7 +467,9 @@
 		opacity: 0.6;
 		width: 25rpx;
 		height: 33.33rpx;
-		line-height: 72.91rpx;
+		line-height: 33.33rpx;
+		align-self: flex-end;
+		margin-bottom:7.81rpx;
 		color: #000;
 	}
 
@@ -463,10 +481,10 @@
 	}
 	.temp-shuiwen{
 		font-size: 25rpx;
-		height: 38.02rpx;
+		height: 32.3rpx;
 		width: 163.54rpx;
 		text-align: center;
-		line-height: 38.2rpx;
+		margin-top: -5.7rpx;
 		color: #000000;
 		opacity: 0.6;
 	}
@@ -498,8 +516,9 @@
 	}
 	.state-con{
 		height: 130.73rpx;
+		width: 182rpx;
 		display: flex;
-		justify-content: center;
+		justify-content: flex-end;	
 		align-items:center;
 	}
 	.loading-state{
@@ -507,57 +526,76 @@
 		/* width: 130.73rpx; */
 		/* background-color: #999999; */
 		display: none;
-		justify-content: center;
+		justify-content: flex-end;
 		align-items:center;
-		margin-right: 50rpx;
-
 	}
 	.loading-state-show{
 		display: flex;
 	}
 	.battery-state{
 		height: 48.96rpx;
-		width: 130.73rpx;
+		width: 182rpx;
 		/* background-color: #999999; */
 		display: none;
-		flex-direction: row;
-		justify-content: center;		
+		flex-direction: row;	
 		align-items: center;
+		justify-content: flex-end;	
 	}
 	.battery-state-show{
 		display: flex;
 	}
-	.battery{
-		height: 22.92rpx;
-		width: 44.79rpx;
-		
-	}
 	.battery-container
 	{
-		height: 22.9rpx;
-		width: 44.79rpx;
-		background-image: url(../../static/battery.png);
+		height: 23rpx;
+		width: 43.8rpx;
+		background-image: url(../../static/battery.png) ;
+		background-repeat:no-repeat;
 		/* background-color: #F0AD4E; */
-		background-size:44.79rpx 22.9rpx ;
+		background-size: cover;
 		display: flex;
 		justify-content: left;
-		align-items: center;
-		
+		align-items: center;		
+	}	
+	.battery-low{
+		background-image: url(../../static/battery_low.png) ;
+	}
+	@media (prefers-color-scheme: dark) {
+		.battery-container
+		{			
+			background-image: url(../../static/battery_dark.png) ;	
+		}
+		.battery-low{
+			background-image: url(../../static/battery_dark_low.png) ;
+		}
 	}
 	.battery-show{
 		height: 16rpx;
 		width: 0rpx;
 		background-color: #1A1A1A;
 		border-radius: 2rpx;
-		margin-left: 4rpx;
+		margin-left: 5.2rpx;
 		
 	}
+	.battery-show-low{
+		background-color: #FB2A2D;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.battery-show
+		{			
+			background-color: #FFFFFF;
+		}
+		.battery-show-low{
+			background-color: #E64548;
+		}
+	}
 	.charging{
-		width: 22.91rpx;
+		width: 17.19rpx;
 		height: 22.91rpx;
 		display: none;
 		background-image: url(../../static/charging.png);
 		background-size: cover;
+		margin-left: 5rpx;
 	}
 	@media (prefers-color-scheme: dark) {
 		.charging{
@@ -568,17 +606,28 @@
 		display: flex;
 	}
 	.battrey_v{
-		margin-left: 9rpx;
 		font-size: 37.5rpx;
+		margin-left: 15.1rpx;	
+	}
+	.battrey_v-low{
+		color:#FB2A2D; 
+	}
+	@media (prefers-color-scheme: dark) {
+		.battrey_v{
+			color: #FFFFFF;
+			opacity: 0.86;
+		}
+		.battrey_v-low{
+			color:#E64548; 
+		}
 	}
 	.re-connect{
 		font-size: 29.17rpx;
 		color: #007DFF;
 		height: 40.63rpx;
 		width: 132.3rpx;
-		text-align: right;
+		justify-content: flex-end;	
 		display: none;
-		margin-right: 50rpx;
 	}
 	.re-connect-show{
 		display: flex;
@@ -603,7 +652,7 @@
 		display: flex;
 		flex-direction: row;
 		/* background-color:#555555; */
-		margin-top: 37.5rpx;
+		margin-top: 41rpx;
 		flex-wrap: wrap;
 	}
 	.cup-set-item{
@@ -616,8 +665,8 @@
 		align-items: center;
 	}
 	.set-icon{
-		height: 83.34rpx;
-		width: 83.34rpx;
+		height: 78.65rpx;
+		width: 78.65rpx;
 		border-radius: 50%;
 		/* background-color: #4CD964; */
 		border:2.09rpx solid rgba(0,0,0,0.2);
@@ -638,8 +687,8 @@
 		}
 	}
 	.set-icon image{
-		height: 55rpx;
-		width: 55rpx;
+		height: 56rpx;
+		width: 56rpx;
 		background-size: cover;
 	}
 	.set-icon-ic_water{
@@ -715,7 +764,7 @@
 		font-size: 25rpx;
 		text-align: center;
 		line-height: 32.81rpx;
-		margin-top: 13.1rpx;
+		margin-top: 18.23rpx;
 	}
 	@media (prefers-color-scheme: dark) {
 		.item-name{

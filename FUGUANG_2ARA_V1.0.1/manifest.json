@@ -1,5 +1,5 @@
 {
-    "name" : "FUGUANG_2ARA_V1.0.1",
+    "name" : "com.huotiantech.mm",
     "appid" : "__UNI__B40E779",
     "description" : "",
     "versionName" : "1.0.0",
@@ -79,6 +79,7 @@
         "router" : {
             "base" : "./",
             "mode" : "hash"
-        }
+        },
+        "title" : "FUGANG-MUG"
     }
 }

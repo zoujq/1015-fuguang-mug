@@ -34,12 +34,12 @@
 <style>
 	 #loading3 {
 	     position: relative;
-	     width: 60.76rpx;
-	     height: 60.76rpx;
+	     width: 73rpx;
+	     height: 65.1rpx;
 	 }
 	 .demo3 {
-	    width: 5.2rpx;
-	    height:5.2rpx;
+	    width: 7rpx;
+	    height: 7rpx;
 	    border-radius: 50%;
 	    background: #D0D0D0;
 	    position: absolute;
@@ -59,12 +59,12 @@
 	 .demo3:nth-child(3){
 	     left: 30.38rpx;
 	     top: 60.76rpx;
-	     animation-delay:0.1s;
+	     animation-delay:0.2s;
 	 }
 	 .demo3:nth-child(4){
 	     left: 15.19rpx;
 	     top: 56.69rpx;
-	     animation-delay:0.2s;
+	     animation-delay:0.3s;
 	 }
 	 .demo3:nth-child(5){
 	     left: 4.07rpx;

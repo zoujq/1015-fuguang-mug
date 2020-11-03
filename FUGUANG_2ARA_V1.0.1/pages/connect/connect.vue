@@ -1,6 +1,6 @@
 <template>
 	<view class="content" >
-		<image class="idimg" src="../../static/xxhdpi/idimg.png"></image>
+		<image class="idimg"  src="../../static/xxhdpi/idimg.png"></image>
 		<view class="connecting" :class="[regist_state==0 ? '' : 'connecting-no-show']">
 			<view class="jin-du">
 				<view class="num" >{{counter}}</view>
@@ -24,21 +24,22 @@
 
 <script>
 	import lan_data from "../../static/language/language.js";
-	//import VConsole from "../../static/vconsole.min.js"
-	import ble from "../../ble/ble.js";  
+	import VConsole from "../../static/vconsole.min.js"
+	import ble from '../../ble/ble.js';  
+	
 	
 	export default {
 		data() {
 			return {
-				// lan:navigator.language=='zh-CN' ? lan_data.cn : lan_data.en,
-				lan:lan_data.cn,
+				lan:navigator.language=='zh-cn' ? lan_data.cn : lan_data.en,
 				regist_state:0,
 				counter:0
 			}
 		},
 		onLoad(){
-			//new VConsole();
+			new VConsole();
 			ble.start_regist();
+			start_regist();
 			setTimeout(this.loop,300,'')
 		},
 		methods: {
@@ -50,19 +51,19 @@
 			},
 			loop(){
 				this.counter++;
-				if(ble.get_bangding_state()==1){
-					return 0;
-				}
-				if(ble.get_bangding_state()==-1)
-				{
-					this.regist_state=-1;
-					return 0;
-				}
-				if(this.counter>=100)
-				{
-					this.regist_state=-1;
-					return 0;
-				}
+				// if(ble.get_bangding_state()==1){
+				// 	return 0;
+				// }
+				// if(ble.get_bangding_state()==-1)
+				// {
+				// 	this.regist_state=-1;
+				// 	return 0;
+				// }
+				// if(this.counter>=100)
+				// {
+				// 	this.regist_state=-1;
+				// 	return 0;
+				// }
 				setTimeout(this.loop,300,'')
 			}
 
@@ -74,16 +75,9 @@
 	.content{
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		background-color: #F7F7F7;
-		height: 100vh;
+		align-items: center;		
 	}
-	@media (prefers-color-scheme: dark) {
-		.content{
-			background-color: #000000;
-		}
-	}
-	
+
 	.connecting{
 		margin-top: 83.33rpx;
 		display: flex;
@@ -154,7 +148,8 @@
 	}
 	.idimg{
 		height: 525rpx;
-		width:  525rpx;
+		width:  525rpx;	
+		margin-top: 195.31rpx;
 	}
 	.icon-error{
 		height: 96rpx;
