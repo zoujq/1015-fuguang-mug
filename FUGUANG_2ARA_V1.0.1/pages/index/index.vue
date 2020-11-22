@@ -6,8 +6,8 @@
 				<view class="d-content">
 					<view class="please">{{lan['Lan02']}}</view>
 					<view>
-						{{lan['Lan03']}}<br/>
-						{{lan['Lan04']}}
+						<view class="tip">{{lan['Lan03']}}</view>
+						<view class="tip">{{lan['Lan04']}}</view>
 					</view>					
 				</view>
 				<view class="d-footer-container">
@@ -106,9 +106,22 @@
 			loading
 		},
 		data() {
+			var lan_init=lan_data.cn;
+			if(navigator.language=='zh-cn' || navigator.language=='zh-CN')
+			{
+				lan_init=lan_data.cn;
+			}
+			else if(navigator.language=='en-US' || navigator.language=='en-us')
+			{
+				lan_init=lan_data.en;
+			}
+			else if(navigator.language=='zh-TW' || navigator.language=='zh-tw')
+			{
+				lan_init=lan_data.fan;
+			}
 			return {
 				pop_show: '',
-				lan:navigator.language=='zh-cn' ? lan_data.cn : navigator.language=='zh-CN'? lan_data.cn : lan_data.en,
+				lan:lan_init,
 				ble_state:0,
 				temp:0,
 				temp_set:0,
@@ -119,12 +132,12 @@
 			}
 		},
 		onLoad() {
-			// new VConsole();
+			//new VConsole();
 			this.ble_state=1;
-			ble.change_nav_title();
-			console.log(navigator.language)
+			// ble.change_nav_title();
+			console.log(navigator.language)//zh-tw
 			
-		},
+		}, 
 		onHide(){
 			this.de_init_index();
 			console.log('index onHide');
@@ -298,6 +311,9 @@
 	.please{
 		margin-bottom: 1.5rpx;
 	}
+	.tip{
+		line-height: 5.78vw;
+	}
 	.d-content{
 		height: 142.71rpx;
 		width: 583.33rpx;
@@ -353,7 +369,7 @@
 	.error-notice-img{
 		height: 45.83rpx;
 		width: 45.83rpx;
-		margin-left: 52.08rpx;
+		margin-left: 4.44vw;
 		background-image: url(../../static/error_notice.png);
 		background-size: cover;
 	}
@@ -367,7 +383,7 @@
 	}
 	.notic-text{
 		font-size: 33.33rpx;
-		margin-left: 35.42rpx;
+		margin-left: 4.44vw;
 		color: #FB2A2D;
 	}
 	@media (prefers-color-scheme: dark) {
